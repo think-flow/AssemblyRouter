@@ -6,7 +6,7 @@ namespace AssemblyRouter.Infrastructure
 {
     internal class OrderedEndpointsSequenceProvider
     {
-        private static ConcurrentDictionary<IEndpointRouteBuilder, OrderedEndpointsSequenceProvider> _sequenceProviderCache = new ConcurrentDictionary<IEndpointRouteBuilder, OrderedEndpointsSequenceProvider>();
+        private static readonly ConcurrentDictionary<IEndpointRouteBuilder, OrderedEndpointsSequenceProvider> _sequenceProviderCache = new ConcurrentDictionary<IEndpointRouteBuilder, OrderedEndpointsSequenceProvider>();
 
         private OrderedEndpointsSequenceProvider()
         {

@@ -19,8 +19,8 @@ namespace AssemblyRouter.Routing
         private IChangeToken _changeToken;
         private List<Endpoint> _endpoints;
         private readonly List<ConventionalRouteEntryWrapper> _routes;
-        private readonly object Lock = new object();
-        private readonly List<Action<EndpointBuilder>> Conventions;
+        private readonly object _lock = new object();
+        private readonly List<Action<EndpointBuilder>> _conventions;
 
         private readonly ActionEndpointFactoryWrapper _endpointFactory;
         private readonly OrderedEndpointsSequenceProvider _orderSequence;
@@ -32,10 +32,12 @@ namespace AssemblyRouter.Routing
             _actionDescriptorProvide = actionDescriptorProvide;
             _orderSequence = orderSequence;
             _routes = new List<ConventionalRouteEntryWrapper>();
-            Conventions = new List<Action<EndpointBuilder>>();
-            DefaultBuilder = new AssemblyControllerActionEndpointConventionBuilder(Lock, Conventions);
+            _conventions = new List<Action<EndpointBuilder>>();
+            DefaultBuilder = new AssemblyControllerActionEndpointConventionBuilder(_lock, _conventions);
         }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        // ReSharper disable once MemberCanBePrivate.Global
         public bool CreateInertEndpoints { get; set; }
 
         public HashSet<Assembly> ApplicationParts { get; } = new HashSet<Assembly>();
@@ -64,11 +66,11 @@ namespace AssemblyRouter.Routing
             IDictionary<string, object> constraints,
             RouteValueDictionary dataTokens)
         {
-            lock (Lock)
+            lock (_lock)
             {
                 var conventions = new List<Action<EndpointBuilder>>();
                 _routes.Add(new ConventionalRouteEntryWrapper(routeName, pattern, defaults, constraints, dataTokens, _orderSequence.GetNext(), conventions));
-                return new AssemblyControllerActionEndpointConventionBuilder(Lock, conventions);
+                return new AssemblyControllerActionEndpointConventionBuilder(_lock, conventions);
             }
         }
 
@@ -76,7 +78,7 @@ namespace AssemblyRouter.Routing
         {
             if (_endpoints == null)
             {
-                lock (Lock)
+                lock (_lock)
                 {
                     if (_endpoints == null)
                     {
@@ -88,10 +90,10 @@ namespace AssemblyRouter.Routing
 
         private void UpdateEndpoints()
         {
-            lock (Lock)
+            lock (_lock)
             {
                 var descriptors = _actionDescriptorProvide.GetDescriptor(ApplicationParts);
-                var endpoints = CreateEndpoints(descriptors, Conventions);
+                var endpoints = CreateEndpoints(descriptors, _conventions);
 
                 // See comments in DefaultActionDescriptorCollectionProvider. These steps are done
                 // in a specific order to ensure callers always see a consistent state.
@@ -129,18 +131,17 @@ namespace AssemblyRouter.Routing
             //      b. Ignore link generation for now
             for (var i = 0; i < descriptors.Count; i++)
             {
-                if (descriptors[i] is ControllerActionDescriptor action)
-                {
-                    _endpointFactory.AddEndpoints(endpoints, routeNames, action, _routes, conventions, CreateInertEndpoints);
+                var action = descriptors[i];
+                
+                _endpointFactory.AddEndpoints(endpoints, routeNames, action, _routes, conventions, CreateInertEndpoints);
 
-                    if (_routes.Count > 0)
+                if (_routes.Count > 0)
+                {
+                    // If we have conventional routes, keep track of the keys so we can create
+                    // the link generation routes later.
+                    foreach (var kvp in action.RouteValues)
                     {
-                        // If we have conventional routes, keep track of the keys so we can create
-                        // the link generation routes later.
-                        foreach (var kvp in action.RouteValues)
-                        {
-                            keys.Add(kvp.Key);
-                        }
+                        keys.Add(kvp.Key);
                     }
                 }
             }

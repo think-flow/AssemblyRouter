@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/>.</param>
         /// <param name="applicationPart">The specifying assembly</param>
         /// <returns>
-        /// An <see cref="WeakControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions.
+        /// An <see cref="AssemblyControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions.
         /// </returns>
         public static AssemblyControllerActionEndpointConventionBuilder MapAssemblyControllers(
            this IEndpointRouteBuilder endpoints,
@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/>.</param>
         /// <param name="applicationParts">The specifying assemblies</param>
         /// <returns>
-        /// An <see cref="WeakControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions.
+        /// An <see cref="AssemblyControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions.
         /// </returns>
         public static AssemblyControllerActionEndpointConventionBuilder MapAssemblyControllers(
             this IEndpointRouteBuilder endpoints,
@@ -74,7 +74,7 @@ namespace Microsoft.AspNetCore.Builder
         /// values of the data tokens.
         /// </param>
         /// <returns>
-        /// An <see cref="WeakControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions for this route.
+        /// An <see cref="AssemblyControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions for this route.
         /// </returns>
         public static AssemblyControllerActionEndpointConventionBuilder MapAssemblyControllerRoute(
            this IEndpointRouteBuilder endpoints,
@@ -110,7 +110,7 @@ namespace Microsoft.AspNetCore.Builder
         /// values of the data tokens.
         /// </param>
         /// <returns>
-        /// An <see cref="WeakControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions for this route.
+        /// An <see cref="AssemblyControllerActionEndpointConventionBuilder"/> for endpoints associated with controller actions for this route.
         /// </returns>
         public static AssemblyControllerActionEndpointConventionBuilder MapAssemblyControllerRoute(
             this IEndpointRouteBuilder endpoints,

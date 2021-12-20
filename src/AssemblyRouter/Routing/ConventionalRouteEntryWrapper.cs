@@ -16,7 +16,7 @@ namespace AssemblyRouter.Routing
 
         public static readonly Type OriginalType;
 
-        public static Func<
+        private static Func<
             string,
             string,
             RouteValueDictionary,

@@ -18,7 +18,7 @@ namespace AssemblyRouter.ApplicationModels
 
         private static Func<object, IEnumerable<TypeInfo>, ApplicationModel> _createApplicationModel;
 
-        private readonly object ApplicationModelFactoryInstance;
+        private readonly object _applicationModelFactoryInstance;
 
         static AssemblyControllerActionDescriptorProvide()
         {
@@ -28,7 +28,7 @@ namespace AssemblyRouter.ApplicationModels
 
         public AssemblyControllerActionDescriptorProvide(IServiceProvider serviceProvider)
         {
-            ApplicationModelFactoryInstance = serviceProvider.GetService(ReflectionHelper.GetApplicationModelFactoryType());
+            _applicationModelFactoryInstance = serviceProvider.GetService(ReflectionHelper.GetApplicationModelFactoryType());
         }
 
         public IReadOnlyList<ControllerActionDescriptor> GetDescriptor(IEnumerable<Assembly> applicationParts)
@@ -36,7 +36,7 @@ namespace AssemblyRouter.ApplicationModels
             //1. 获取控制器的Typeinfo
             var typeInfos = applicationParts.SelectMany(assembly => assembly.DefinedTypes.Where(IsController));
             //2. 获取ApplicationModelFactory的实例，并反射调用CreateApplicationModel方法创建ApplicationModel
-            var applicationModel = _createApplicationModel.Invoke(ApplicationModelFactoryInstance, typeInfos);
+            var applicationModel = _createApplicationModel.Invoke(_applicationModelFactoryInstance, typeInfos);
             //3. 反射调用ControllerActionDescriptorBuilder静态类的Build方法，构建ControllerActionDescriptor
             return (List<ControllerActionDescriptor>)_buildDescriptorDelegate.Invoke(applicationModel);
         }
