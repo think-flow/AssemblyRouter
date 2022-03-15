@@ -49,6 +49,8 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentException("element cannot be empty", nameof(applicationParts));
             }
 
+            EnsureControllerServices(endpoints);
+
             return GetOrCreateDataSource(endpoints, applicationParts).DefaultBuilder;
         }
 
@@ -131,6 +133,8 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentException("element cannot be empty", nameof(applicationParts));
             }
 
+            EnsureControllerServices(endpoints);
+
             var dataSource = GetOrCreateDataSource(endpoints, applicationParts);
             return dataSource.AddRoute(
                 name,
@@ -156,6 +160,15 @@ namespace Microsoft.AspNetCore.Builder
                 dataSource.ApplicationParts.Add(applicationPart);
             }
             return dataSource;
+        }
+
+        private static void EnsureControllerServices(IEndpointRouteBuilder endpoints)
+        {
+            var marker = endpoints.ServiceProvider.GetService(ReflectionHelper.GetMvcMarkerServiceType());
+            if (marker == null)
+            {
+                throw new InvalidOperationException("Unable to find the required services. Please add all the required services by calling 'IServiceCollection.AddControllers' inside the call to 'ConfigureServices(...)' in the application startup code.”");
+            }
         }
     }
 }

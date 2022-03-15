@@ -17,7 +17,9 @@ namespace AssemblyRouter.Infrastructure
 
         public const string ControllerActionDescriptorBuilderFullName = "Microsoft.AspNetCore.Mvc.ApplicationModels.ControllerActionDescriptorBuilder";
 
-        public readonly static Assembly MvcCoreAssembly;
+        public const string MvcMarkerServiceFullName = "Microsoft.Extensions.DependencyInjection.MvcMarkerService";
+
+        public static readonly Assembly MvcCoreAssembly;
 
         private static readonly ConcurrentDictionary<string, Type> _cache;
 
@@ -34,6 +36,8 @@ namespace AssemblyRouter.Infrastructure
         public static Type GetApplicationModelFactoryType() => GetOrAdd(ApplicationModelFactoryFullName);
 
         public static Type GetControllerActionDescriptorBuilderType() => GetOrAdd(ControllerActionDescriptorBuilderFullName);
+
+        public static Type GetMvcMarkerServiceType() => GetOrAdd(MvcMarkerServiceFullName);
 
         private static Type GetOrAdd(string fullName)
         {
